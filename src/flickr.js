@@ -1,6 +1,6 @@
 import {HttpClient} from 'aurelia-http-client';
 
-var url = 'http://api.flickr.com/services/feeds/photos_public.gne?tags=rainier&tagmode=any&format=json';
+var url = 'http://api.flickr.com/services/feeds/photos_public.gne?tagmode=any&format=json&tags=';
 
 export class Flickr{
     static inject() { return [HttpClient]; }
@@ -11,15 +11,17 @@ export class Flickr{
     }
 
     activate(tag){
-        console.log(tag);
-        return this.http.jsonp(url).then(response => {
-            console.log(JSON.stringify(response.content.items[0]));
+        if (!tag.id) {
+            tag.id = 'sky'
+        }
+        return this.http.jsonp(url+tag.id).then(response => {
             this.images = response.content.items;
         });
     }
 
     randomTag(imageTagsString) {
         var imageTags = imageTagsString.split(" ");
-        return '#/flickr/' + imageTags[0];
+        var randomIndex = Math.floor(Math.random()*imageTags.length);
+        return '#/flickr/' + imageTags[randomIndex];
     }
 }
